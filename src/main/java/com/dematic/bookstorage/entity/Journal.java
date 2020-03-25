@@ -2,14 +2,16 @@ package com.dematic.bookstorage.entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
-@Entity
 public class Journal extends Book {
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
-	@Column(name = "science_index")
+    @NotNull
+    @Min(value = 0)
+    @Max(value = 9)
 	private Integer scienceIndex;
 
 	public Integer getScienceIndex() {
@@ -22,6 +24,6 @@ public class Journal extends Book {
 
 	@Override
 	public double calculatePrice() {
-		return getQuantity() * getPrice() * getScienceIndex();
+		return getQuantity() * getPrice() * this.scienceIndex;
 	}
 }

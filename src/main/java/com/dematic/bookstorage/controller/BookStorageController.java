@@ -1,6 +1,8 @@
 package com.dematic.bookstorage.controller;
 
+import com.dematic.bookstorage.entity.AntiqueBook;
 import com.dematic.bookstorage.entity.Book;
+import com.dematic.bookstorage.entity.Journal;
 import com.dematic.bookstorage.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,52 +30,50 @@ public class BookStorageController {
 	@ResponseBody
 	public ResponseEntity addBook(@Valid @RequestBody Book book, BindingResult bindingResult) {
 
-		// check if there are errors in JSON
-		if (bindingResult.hasErrors()) {
-
-			String errorMessage = "";
-			for(ObjectError error : bindingResult.getAllErrors()) {
-				errorMessage += error.getDefaultMessage() + "\n";
-			}
-
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
-		}
-
-		bookService.saveBook(book);
-
-		return ResponseEntity.status(HttpStatus.CREATED).body("Book is added successfully.");
+	    return validateAndAddBook(book, bindingResult);
 	}
 
-	@GetMapping("/getBook")
+	@PostMapping("/addAntiqueBook")
 	@ResponseBody
-	public ResponseEntity getBook(@RequestParam("barcode") String barcode) {
+	public ResponseEntity addAntique(@Valid @RequestBody AntiqueBook antiqueBook, BindingResult bindingResult) {
 
-		Book book = bookService.getBookByBarcode(barcode);
-
-		if (book == null) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("There is no book with barcode: " + barcode);
-		} else {
-			return ResponseEntity.ok(book);
-		}
-	}
-
-/*	@PostMapping("/addAntiqueBook")
-	@ResponseBody
-	public String addAntique(@RequestParam("year") int year,  @RequestBody Book antiqueBook) {
-
-		antiqueBook.setYear(year);
-		bookService.saveBook(antiqueBook);
-
-		return "OK";
+        return validateAndAddBook(antiqueBook, bindingResult);
 	}
 
 	@PostMapping("/addJournal")
 	@ResponseBody
-	public String addJournal(@RequestParam("index") int index,  @RequestBody Book journal) {
+	public ResponseEntity addJournal(@Valid @RequestBody Journal journal, BindingResult bindingResult) {
 
-		journal.setYear(index);
-		bookService.saveBook(journal);
+        return validateAndAddBook(journal, bindingResult);
+	}
 
-		return "OK";
-	}*/
+    @GetMapping("/getBook")
+    @ResponseBody
+    public ResponseEntity getBook(@RequestParam("barcode") String barcode) {
+
+        Book book = bookService.getBookByBarcode(barcode);
+
+        if (book == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("There is no book with barcode: " + barcode);
+        } else {
+            return ResponseEntity.ok(book);
+        }
+    }
+
+	private ResponseEntity validateAndAddBook(Book book, BindingResult bindingResult) {
+        // check if there are errors in JSON
+        if (bindingResult.hasErrors()) {
+
+            String errorMessage = "";
+            for(ObjectError error : bindingResult.getAllErrors()) {
+                errorMessage += error.getDefaultMessage() + "\n";
+            }
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
+        }
+
+        bookService.saveBook(book);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body("Book is added successfully.");
+    }
 }

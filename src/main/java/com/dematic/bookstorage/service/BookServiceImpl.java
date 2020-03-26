@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class BookServiceImpl implements BookService{
@@ -31,4 +32,16 @@ public class BookServiceImpl implements BookService{
 	public Book getBookByBarcode(String barcode) {
 		return bookDAO.getBookByBarcode(barcode);
 	}
+
+    @Override
+    @Transactional
+    public List<Map<String, Double>> getTotalPrices(List<String> barcodeList) {
+        return bookDAO.getTotalPrices(barcodeList);
+    }
+
+    @Override
+    @Transactional
+    public int updateBook(Map<String, String> values, String barcode) {
+        return bookDAO.updateBook(values, barcode);
+    }
 }

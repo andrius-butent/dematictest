@@ -1,8 +1,5 @@
 package com.dematic.bookstorage.entity;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-
-import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -26,7 +23,7 @@ public class Book {
 	@NotNull(message = "Price is required")
 	private Double price;
 
-	public String getName() {
+    public String getName() {
 		return name;
 	}
 

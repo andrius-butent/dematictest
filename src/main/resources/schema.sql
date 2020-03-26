@@ -7,6 +7,6 @@ CREATE TABLE book (
   quantity int(11) DEFAULT NULL,
   price double(20) DEFAULT NULL,
   year int(10) DEFAULT NULL,
-  science_index int(2) DEFAULT NULL,
+  scienceIndex int(2) DEFAULT NULL,
   PRIMARY KEY (id)
 )

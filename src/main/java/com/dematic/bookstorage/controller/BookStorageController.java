@@ -12,13 +12,19 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 public class BookStorageController {
 
 	@Autowired
 	private BookService bookService;
+
+	private List<String> columns = Arrays.asList("name", "author", "barcode", "quantity", "price", "year", "scienceIndex");
+    private static final String BARCODE = "barcode";
 
 	@GetMapping("/list")
 	@ResponseBody
@@ -60,10 +66,44 @@ public class BookStorageController {
         }
     }
 
+    @PutMapping("/updateBook")
+    @ResponseBody
+    public ResponseEntity updateBook(@RequestBody Map<String, String> values, @RequestParam("barcode") String barcode) {
+
+       boolean isJSONValid = columns.containsAll(values.keySet());
+
+        if (isJSONValid && values.size() > 0) {
+            int result = bookService.updateBook(values, barcode);
+
+            if (result > 0) {
+                return ResponseEntity.ok("The book was updated.");
+            }
+        }
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("JSON or barcode is invalid !!!");
+    }
+
+    @GetMapping("/getTotalPrice")
+    @ResponseBody
+    public ResponseEntity getTotalPrice(@RequestBody List<Map<String, String>> values) {
+
+	    // we collect barcode from JSON list
+        List<String> barcodeList = values.stream().filter(entry -> entry.keySet().contains(BARCODE)).map(entry -> entry.get(BARCODE))
+                .collect(Collectors.toList());
+
+        if (barcodeList.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Empty barcode list !!!");
+        }
+
+        return ResponseEntity.ok().body(bookService.getTotalPrices(barcodeList));
+    }
+
 	private ResponseEntity validateAndAddBook(Book book, BindingResult bindingResult) {
-        // check if there are errors in JSON
+
+	    // check if there are errors in JSON
         if (bindingResult.hasErrors()) {
 
+            // collecting all errors
             String errorMessage = "";
             for(ObjectError error : bindingResult.getAllErrors()) {
                 errorMessage += error.getDefaultMessage() + "\n";

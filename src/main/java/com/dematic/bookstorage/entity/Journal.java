@@ -1,20 +1,17 @@
 package com.dematic.bookstorage.entity;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 public class Journal extends Book {
 
-	@JsonInclude(JsonInclude.Include.NON_NULL)
-    @NotNull
-    @Min(value = 0)
-    @Max(value = 9)
+    @NotNull(message = "Science Index is required")
+    @Min(value = 1)
+    @Max(value = 10)
 	private Integer scienceIndex;
 
-	public Integer getScienceIndex() {
+    public Integer getScienceIndex() {
 		return scienceIndex;
 	}
 
